@@ -50,16 +50,30 @@ This will get triggered on change of viewport selection,
   }, [activeNode]);
 
   return (
-    <aside className="flow-2 h-[100vh] w-[25%] border-l border-gray-300 px-5">
-      <h1 className="mx-auto font-semibold text-lg text-center py-5 mb-10 relative right-2">
-        {activeNode ? "Edit Node" : "Nodes"}
+    <aside className="flow-2 h-[100vh] w-[25%] border-l border-gray-300 overflow-hidden">
+      <h1 className="mx-auto font-[400] text-lg text-center py-2 mb-10 relative right-2 border">
+        <div>
+          {activeNode && (
+            <button
+              onClick={() => {
+                setActiveNode(null);
+              }}
+              className="absolute left-4"
+            >
+              <img src="back.png" alt="back" />
+            </button>
+          )}
+          <p>{activeNode ? "Edit Node" : "Nodes"}</p>
+        </div>
       </h1>
 
-      {activeNode ? (
-        <NodeEditor activeNode={activeNode} setActiveNode={setActiveNode} />
-      ) : (
-        <NodesHousing />
-      )}
+      <div className="px-5">
+        {activeNode ? (
+          <NodeEditor activeNode={activeNode} setActiveNode={setActiveNode} />
+        ) : (
+          <NodesHousing />
+        )}
+      </div>
     </aside>
   );
 }
