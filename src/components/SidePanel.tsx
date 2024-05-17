@@ -37,6 +37,7 @@ This will get triggered on change of viewport selection,
     },
   });
 
+  // Update the node in the react flow
   useEffect(() => {
     reactFlow.setNodes((nodes) => {
       return nodes.map((node) => {

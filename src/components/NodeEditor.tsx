@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Node } from "reactflow";
+import { Node, useReactFlow } from "reactflow";
 
 export type ActiveNodeProps = {
   activeNode: Node | null;
@@ -25,19 +25,22 @@ export default function NodeEditor({
 
 function MessageEditor({ activeNode, setActiveNode }: ActiveNodeProps) {
   const [message, setMessage] = useState<string>(activeNode?.data.message);
+  const reactFlow = useReactFlow();
 
   // update activeNode on change of message
   const handleActiveNodeChange = (message: string) => {
     if (!activeNode) {
       return;
     }
+    const latestNodeInstance = reactFlow.getNode(activeNode.id);
     const updatedNodeObj = {
-      ...activeNode,
+      ...latestNodeInstance,
       data: {
-        ...activeNode.data,
+        ...latestNodeInstance?.data,
         message,
       },
     };
+    // @ts-ignore-next-line
     setActiveNode(updatedNodeObj);
   };
 
