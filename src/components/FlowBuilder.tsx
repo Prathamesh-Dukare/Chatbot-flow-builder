@@ -14,24 +14,22 @@ import {
 
 import "reactflow/dist/style.css";
 
-import { initialNodes, nodeTypes } from "./nodes";
-import { initialEdges } from "./edges";
+import { initialNodes, nodeTypes } from "../nodes";
+import { initialEdges } from "../edges";
+import { GetNewNodeId, isDuplicateEdgeStart } from "../util";
+import SidePanel from "./SidePanel";
 
 export default function FlowBuilder() {
   const reactFlowInstance = useReactFlow();
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+
+  // Initial states for nodes and edges
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes as []);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const isDuplicateEdgeStart = (connection: any) => {
-    return edges.some((edge) => {
-      // console.log(edge.source, connection.source);
-      return edge.source === connection.source;
-    });
-  };
-
+  // Validate & Handle connections between nodes
   const onConnect: OnConnect = (connection) => {
-    console.log("onConnect", connection);
-    if (isDuplicateEdgeStart(connection)) {
+    // Avoid duplicate edges starting from the same node
+    if (isDuplicateEdgeStart(edges, connection)) {
       console.log("Duplicate edge start");
       return;
     }
@@ -43,50 +41,41 @@ export default function FlowBuilder() {
     setEdges((edges) => addEdge(edge, edges));
   };
 
-  // * Drag and Drop functionality
-  // fired on dragg start
-  const onDragStart = (
-    event: React.DragEvent<HTMLDivElement>,
-    nodeType: string
-  ) => {
-    event.dataTransfer.setData("application/reactflow", nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
-
-  // fired while dragging
+  // * Handlers for Drag and Drop functionality
+  // fired when dragging over
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  // fired when drop
-  const onDrop = useCallback(
-    (event: any) => {
+  // fired when dropping
+  const onDrop =
+    // useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
-
       const type = event.dataTransfer.getData("application/reactflow");
-
-      // return if type is invalid
       if (typeof type === "undefined" || !type) {
         return;
       }
+
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
       // console.log("position", position);
 
+      // Create a new node with the type and position
       const newNode = {
-        id: "23",
+        id: GetNewNodeId(nodes),
         type,
         position,
         data: { message: `Enter the message...` },
       };
 
       setNodes((nodes) => nodes.concat(newNode));
-    },
-    [reactFlowInstance]
-  );
+    };
+  //   [reactFlowInstance]
+  // );
 
   return (
     <section>
@@ -97,13 +86,7 @@ export default function FlowBuilder() {
       </nav>
 
       <main className="flex w-full">
-        <div
-          className=""
-          style={{
-            height: "100vh",
-            width: "70%",
-          }}
-        >
+        <div className="h-[100vh] w-[70%]">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -123,32 +106,7 @@ export default function FlowBuilder() {
         </div>
 
         {/* Side Panel */}
-
-        <aside
-          className=""
-          style={{
-            height: "100vh",
-            width: "30%",
-            borderLeft: "1px solid black",
-            borderColor: "gray",
-          }}
-        >
-          <h1>Panel</h1>
-
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "message")}
-            className="node-item flex bg-white items-center flex-col gap-2 border rounded-md w-fit px-10 py-2 cursor-grab"
-          >
-            <img
-              className="w-6"
-              src="chat-icon.png"
-              alt="message"
-              draggable={false}
-            />
-            <p className="text-sm">Message</p>
-          </div>
-        </aside>
+        <SidePanel />
       </main>
     </section>
   );

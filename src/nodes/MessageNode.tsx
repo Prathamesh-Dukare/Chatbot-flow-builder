@@ -1,8 +1,15 @@
 import { NodeProps, Position } from "reactflow";
-import CustomHandle from "./CustomHandle";
+import CustomHandle from "../components/CustomHandle";
 
 type MessageNodeProps = {
   message?: string;
+};
+
+export type messageNodeType = {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: { message?: string };
 };
 
 export default function MessageNode({ data }: NodeProps<MessageNodeProps>) {

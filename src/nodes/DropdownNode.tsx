@@ -1,8 +1,15 @@
 import { Handle, NodeProps, Position } from "reactflow";
-import CustomHandle from "./CustomHandle";
+import CustomHandle from "../components/CustomHandle";
 
 type DropDownNodeProps = {
   options?: string[];
+};
+
+export type DropDownNodeType = {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: { options: string[] };
 };
 
 export default function DropDownNode({ data }: NodeProps<DropDownNodeProps>) {

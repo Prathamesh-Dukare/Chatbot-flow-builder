@@ -1,8 +1,9 @@
 import type { Node, NodeTypes } from "reactflow";
-import MessageNode from "./MessageNode";
-import DropDownNode from "./DropdownNode";
+import MessageNode, { messageNodeType } from "./MessageNode";
+import DropDownNode, { DropDownNodeType } from "./DropdownNode";
 
-export const initialNodes = [
+// Initial state of the nodes
+export const initialNodes: (messageNodeType | DropDownNodeType)[] = [
   {
     id: "1",
     type: "message",
@@ -35,6 +36,7 @@ export const initialNodes = [
   },
 ] satisfies Node[];
 
+// Node types for the FlowBuilder
 export const nodeTypes = {
   message: MessageNode,
   dropDown: DropDownNode,
