@@ -1,42 +1,51 @@
-import React, { useCallback } from "react";
-
-import ReactFlow, {
-  MiniMap,
+import type { OnConnect } from "reactflow";
+import {
+  Background,
   Controls,
+  ReactFlow,
+  addEdge,
   useNodesState,
   useEdgesState,
-  addEdge,
+  MiniMap,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
-
-const initialNodes = [
-  { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-  { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-];
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+import { initialNodes, nodeTypes } from "./nodes";
+import { initialEdges } from "./edges";
 
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
+  const onConnect: OnConnect = (connection) => {
+    console.log("onConnect", connection);
+  };
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-      >
-        <Controls />
-        <MiniMap />
-      </ReactFlow>
-    </div>
+    <section>
+      <nav className="bg-gray-200 relative justify-end px-10">
+        <button className=" bg-white font-semibold px-3 py-1 my-2 text-purple-500 border rounded-md hover:bg-gray-100">
+          Save Changes
+        </button>
+      </nav>
+
+      <main className="flex">
+        <div className="h-[100vh] w-[100vw]">
+          <ReactFlow
+            nodes={nodes}
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            edges={edges}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            fitView
+          >
+            <Background />
+            <MiniMap />
+            <Controls />
+          </ReactFlow>
+        </div>
+      </main>
+    </section>
   );
 }
