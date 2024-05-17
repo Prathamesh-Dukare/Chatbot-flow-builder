@@ -18,7 +18,7 @@ export default function MessageNode({ data }: NodeProps<MessageNodeProps>) {
       <div className="block-title bg-[#b2f0e3] px-5">
         <p className="font-[500]">Send Message</p>
       </div>
-      <div className="block-message px-5 py-2">{data.message}</div>
+      <div className="block-message px-5 py-2 min-h-[40px]">{data.message}</div>
 
       <CustomHandle type="target" position={Position.Left} />
       <CustomHandle type="source" position={Position.Right} />

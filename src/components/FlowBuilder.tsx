@@ -1,7 +1,4 @@
-import type { OnConnect } from "reactflow";
-import { useCallback } from "react";
-import { useReactFlow } from "reactflow";
-
+import { useCallback, useState } from "react";
 import {
   Background,
   Controls,
@@ -10,6 +7,9 @@ import {
   useNodesState,
   useEdgesState,
   MiniMap,
+  OnConnect,
+  useReactFlow,
+  Node,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -17,6 +17,7 @@ import "reactflow/dist/style.css";
 import { initialNodes, nodeTypes } from "../nodes";
 import { initialEdges } from "../edges";
 import { GetNewNodeId, isDuplicateEdgeStart } from "../util";
+
 import SidePanel from "./SidePanel";
 
 export default function FlowBuilder() {
@@ -25,6 +26,7 @@ export default function FlowBuilder() {
   // Initial states for nodes and edges
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes as []);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [activeNode, setActiveNode] = useState<Node | null>(null);
 
   // Validate & Handle connections between nodes
   const onConnect: OnConnect = (connection) => {
@@ -54,7 +56,7 @@ export default function FlowBuilder() {
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       const type = event.dataTransfer.getData("application/reactflow");
-      if (typeof type === "undefined" || !type) {
+      if (typeof type === "undefined" || !type || type !== "message") {
         return;
       }
 
@@ -62,17 +64,18 @@ export default function FlowBuilder() {
         x: event.clientX,
         y: event.clientY,
       });
-      // console.log("position", position);
 
       // Create a new node with the type and position
-      const newNode = {
+      const newNode: Node = {
         id: GetNewNodeId(nodes),
         type,
         position,
-        data: { message: `Enter the message...` },
+        data: { message: `` },
       };
 
       setNodes((nodes) => nodes.concat(newNode));
+      // update active node for opening the side panel
+      setActiveNode(newNode);
     };
   //   [reactFlowInstance]
   // );
@@ -85,8 +88,8 @@ export default function FlowBuilder() {
         </button>
       </nav>
 
-      <main className="flex w-full">
-        <div className="h-[100vh] w-[70%]">
+      <main className="flow-container flex w-full">
+        <div className="flow-1 h-[100vh] w-[70%]">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -106,7 +109,7 @@ export default function FlowBuilder() {
         </div>
 
         {/* Side Panel */}
-        <SidePanel />
+        <SidePanel activeNode={activeNode} setActiveNode={setActiveNode} />
       </main>
     </section>
   );

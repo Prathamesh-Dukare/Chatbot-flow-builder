@@ -1,32 +1,67 @@
-import React from "react";
+import { useEffect } from "react";
+import NodesHousing from "./NodesHousing";
+import NodeEditor from "./NodeEditor";
+import {
+  Viewport,
+  useOnSelectionChange,
+  useOnViewportChange,
+  useReactFlow,
+} from "reactflow";
+import { isValidUniqueSelection } from "../util";
 
-export default function SidePanel() {
-  // fired when dragging starts
-  const onDragStart = (
-    event: React.DragEvent<HTMLDivElement>,
-    nodeType: string
-  ) => {
-    event.dataTransfer.setData("application/reactflow", nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
+export default function SidePanel({ activeNode, setActiveNode }: any) {
+  const reactFlow = useReactFlow();
+
+  // This will get triggered on selection change of item (node, edge) on the viewport
+  useOnSelectionChange({
+    onChange: ({ nodes, edges }) => {
+      // console.log("sidepan", {
+      //   nodes,
+      //   edges,
+      // });
+
+      if (!isValidUniqueSelection({ nodes, edges })) {
+        return;
+      } else {
+        setActiveNode(nodes[0]);
+      }
+    },
+  });
+
+  /* 
+This will get triggered on change of viewport selection,
+ we can use this to identify if user has clicked on the viewport to deselect the node
+*/
+  useOnViewportChange({
+    onStart: (viewport: Viewport) => {
+      console.log(viewport, "has changed");
+      // setIsEditorActive(false);
+      setActiveNode(null);
+    },
+  });
+
+  useEffect(() => {
+    reactFlow.setNodes((nodes) => {
+      return nodes.map((node) => {
+        if (node.id === activeNode?.id) {
+          return activeNode;
+        }
+        return node;
+      });
+    });
+  }, [activeNode]);
 
   return (
-    <aside className="h-[100vh] w-[30%] border-l border-gray-300">
-      <h1>Panel</h1>
+    <aside className="flow-2 h-[100vh] w-[30%] border-l border-gray-300 px-5">
+      <h1 className="mx-auto font-semibold text-lg text-center py-5 mb-10 relative right-2">
+        {activeNode ? "Edit Node" : "Nodes"}
+      </h1>
 
-      <div
-        draggable
-        onDragStart={(event) => onDragStart(event, "message")}
-        className="node-item flex bg-white items-center flex-col gap-2 border rounded-md w-fit px-10 py-2 cursor-grab"
-      >
-        <img
-          className="w-6"
-          src="chat-icon.png"
-          alt="message"
-          draggable={false}
-        />
-        <p className="text-sm">Message</p>
-      </div>
+      {activeNode ? (
+        <NodeEditor activeNode={activeNode} setActiveNode={setActiveNode} />
+      ) : (
+        <NodesHousing />
+      )}
     </aside>
   );
 }

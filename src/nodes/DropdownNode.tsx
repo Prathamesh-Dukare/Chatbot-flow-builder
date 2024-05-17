@@ -1,4 +1,4 @@
-import { Handle, NodeProps, Position } from "reactflow";
+import { NodeProps, Position } from "reactflow";
 import CustomHandle from "../components/CustomHandle";
 
 type DropDownNodeProps = {
