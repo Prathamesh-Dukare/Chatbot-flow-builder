@@ -17,10 +17,25 @@ export default function App() {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const onConnect: OnConnect = (connection) => {
-    console.log("onConnect", connection);
+  const isDuplicateEdgeStart = (connection: any) => {
+    return edges.some((edge) => {
+      // console.log(edge.source, connection.source);
+      return edge.source === connection.source;
+    });
   };
 
+  const onConnect: OnConnect = (connection) => {
+    console.log("onConnect", connection);
+    if (isDuplicateEdgeStart(connection)) {
+      console.log("Duplicate edge start");
+      return;
+    }
+    const edge = {
+      id: `${connection.source}-${connection.target}`,
+      ...connection,
+    };
+    setEdges((edges) => addEdge(edge, edges));
+  };
   return (
     <section>
       <nav className="bg-gray-200 relative justify-end px-10">
