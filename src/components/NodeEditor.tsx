@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Node } from "reactflow";
 
-type NodeEditorProps = {
+export type ActiveNodeProps = {
   activeNode: Node | null;
   setActiveNode: React.Dispatch<React.SetStateAction<Node | null>>;
 };
@@ -12,7 +12,7 @@ type NodeEditorProps = {
 export default function NodeEditor({
   activeNode,
   setActiveNode,
-}: NodeEditorProps) {
+}: ActiveNodeProps) {
   return (
     <div className="border rounded-sm py-3 px-2">
       {activeNode && (
@@ -23,8 +23,8 @@ export default function NodeEditor({
   );
 }
 
-function MessageEditor({ activeNode, setActiveNode }: any) {
-  const [message, setMessage] = useState<string>(activeNode.data.message);
+function MessageEditor({ activeNode, setActiveNode }: ActiveNodeProps) {
+  const [message, setMessage] = useState<string>(activeNode?.data.message);
 
   // update activeNode on change of message
   const handleActiveNodeChange = (message: string) => {
@@ -42,15 +42,15 @@ function MessageEditor({ activeNode, setActiveNode }: any) {
   };
 
   useEffect(() => {
-    setMessage(activeNode.data.message);
-  }, [activeNode.data.message]);
+    setMessage(activeNode?.data.message);
+  }, [activeNode?.data.message]);
 
   return (
     <div>
       <form className="flex flex-col gap-4">
         <label htmlFor="message-input">Message Text</label>
         <textarea
-          className="outline-none border rounded-md p-1 focus:border-purple-500"
+          className="outline-none border rounded-md p-1 focus:border-blue-600"
           id="message-input"
           placeholder="Enter message"
           value={message}

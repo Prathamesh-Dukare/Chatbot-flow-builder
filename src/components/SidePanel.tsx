@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import NodesHousing from "./NodesHousing";
-import NodeEditor from "./NodeEditor";
+import NodeEditor, { ActiveNodeProps } from "./NodeEditor";
 import {
   Viewport,
   useOnSelectionChange,
@@ -9,17 +9,15 @@ import {
 } from "reactflow";
 import { isValidUniqueSelection } from "../util";
 
-export default function SidePanel({ activeNode, setActiveNode }: any) {
+export default function SidePanel({
+  activeNode,
+  setActiveNode,
+}: ActiveNodeProps) {
   const reactFlow = useReactFlow();
 
   // This will get triggered on selection change of item (node, edge) on the viewport
   useOnSelectionChange({
     onChange: ({ nodes, edges }) => {
-      // console.log("sidepan", {
-      //   nodes,
-      //   edges,
-      // });
-
       if (!isValidUniqueSelection({ nodes, edges })) {
         return;
       } else {
@@ -34,8 +32,7 @@ This will get triggered on change of viewport selection,
 */
   useOnViewportChange({
     onStart: (viewport: Viewport) => {
-      console.log(viewport, "has changed");
-      // setIsEditorActive(false);
+      console.log("viewport", viewport);
       setActiveNode(null);
     },
   });
@@ -52,7 +49,7 @@ This will get triggered on change of viewport selection,
   }, [activeNode]);
 
   return (
-    <aside className="flow-2 h-[100vh] w-[30%] border-l border-gray-300 px-5">
+    <aside className="flow-2 h-[100vh] w-[25%] border-l border-gray-300 px-5">
       <h1 className="mx-auto font-semibold text-lg text-center py-5 mb-10 relative right-2">
         {activeNode ? "Edit Node" : "Nodes"}
       </h1>

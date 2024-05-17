@@ -14,7 +14,7 @@ export const initialNodes: (messageNodeType | DropDownNodeType)[] = [
     id: "2",
     type: "message",
     position: { x: 300, y: 300 },
-    data: { message: "Tell me your query!" },
+    data: { message: "Tell me your query" },
   },
   {
     id: "3",
@@ -26,7 +26,7 @@ export const initialNodes: (messageNodeType | DropDownNodeType)[] = [
     id: "4",
     type: "message",
     position: { x: 600, y: 350 },
-    data: { message: "assist with your email" },
+    data: { message: "Assist me with your email" },
   },
   // {
   //   id: "5",

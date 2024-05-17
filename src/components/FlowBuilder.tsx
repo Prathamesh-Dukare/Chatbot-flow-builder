@@ -16,19 +16,20 @@ import "reactflow/dist/style.css";
 
 import { initialNodes, nodeTypes } from "../nodes";
 import { initialEdges } from "../edges";
-import { GetNewNodeId, isDuplicateEdgeStart } from "../util";
+import { GetNewNodeId, ValidateFlow, isDuplicateEdgeStart } from "../util";
 
 import SidePanel from "./SidePanel";
+import { toast } from "sonner";
 
 export default function FlowBuilder() {
-  const reactFlowInstance = useReactFlow();
+  const reactFlow = useReactFlow();
 
-  // Initial states for nodes and edges
+  // initial states for nodes and edges
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes as []);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [activeNode, setActiveNode] = useState<Node | null>(null);
 
-  // Validate & Handle connections between nodes
+  // validate & Handle connections between nodes
   const onConnect: OnConnect = (connection) => {
     // Avoid duplicate edges starting from the same node
     if (isDuplicateEdgeStart(edges, connection)) {
@@ -60,12 +61,12 @@ export default function FlowBuilder() {
         return;
       }
 
-      const position = reactFlowInstance.screenToFlowPosition({
+      const position = reactFlow.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
-      // Create a new node with the type and position
+      // create a new node with the type and position
       const newNode: Node = {
         id: GetNewNodeId(nodes),
         type,
@@ -74,22 +75,41 @@ export default function FlowBuilder() {
       };
 
       setNodes((nodes) => nodes.concat(newNode));
-      // update active node for opening the side panel
+      // update active node
       setActiveNode(newNode);
     };
-  //   [reactFlowInstance]
+  //   [reactFlow]
   // );
+
+  // Save flow handler
+  const saveFlow = () => {
+    const isFlowValid = ValidateFlow(nodes, edges);
+    if (!isFlowValid) {
+      toast.error("Cannot save flow");
+      return;
+    }
+
+    // save flow
+    console.log("flow_state", {
+      nodes,
+      edges,
+    });
+    toast.success("Flow saved");
+  };
 
   return (
     <section>
       <nav className="bg-gray-200 relative flex justify-end px-10">
-        <button className=" bg-white font-semibold px-3 py-1 my-2 text-purple-500 border rounded-md hover:bg-gray-100">
+        <button
+          onClick={saveFlow}
+          className=" bg-white font-[500] px-3 py-1 my-2 text-blue-600 border rounded-md hover:bg-gray-100"
+        >
           Save Changes
         </button>
       </nav>
 
       <main className="flow-container flex w-full">
-        <div className="flow-1 h-[100vh] w-[70%]">
+        <div className="flow-1 h-[100vh] w-[75%]">
           <ReactFlow
             nodes={nodes}
             edges={edges}

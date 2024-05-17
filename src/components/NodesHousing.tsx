@@ -27,7 +27,7 @@ function NodeCard({ nodeType }: { nodeType: string }) {
     <div
       draggable
       onDragStart={(event) => onDragStart(event, nodeType)}
-      className="node-item flex bg-white items-center flex-col gap-2 border rounded-md w-36 px-10 py-2 cursor-pointer hover:bg-gray-200"
+      className="node-item flex bg-white items-center flex-col gap-2 border border-blue-600 rounded-md w-36 px-6 py-1 cursor-pointer hover:bg-gray-100"
     >
       <img
         className="w-6"
@@ -36,7 +36,7 @@ function NodeCard({ nodeType }: { nodeType: string }) {
         draggable={false}
       />
 
-      <p className="text-sm">
+      <p className="text-sm text-blue-600">
         {nodeType.charAt(0).toUpperCase() + nodeType.slice(1)}
       </p>
     </div>
