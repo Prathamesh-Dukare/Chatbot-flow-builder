@@ -1,6 +1,6 @@
 import { Edge, Node } from "reactflow";
 
-function GetNewNodeId(nodes: Node[]): string {
+function getNewNodeId(nodes: Node[]): string {
   const lastId = Math.max(...nodes.map((node) => parseInt(node.id)));
   return (lastId + 1).toString();
 }
@@ -19,7 +19,7 @@ function isValidUniqueSelection(selection: { nodes: Node[]; edges: Edge[] }) {
 
 // Check if the flow is valid as per the requirements
 // There should be more than 1 node with empty target handles
-function ValidateFlow(nodes: Node[], edges: Edge[]): boolean {
+function validateFlow(nodes: Node[], edges: Edge[]): boolean {
   if (nodes.length < 2) {
     return true;
   }
@@ -47,8 +47,8 @@ function ValidateFlow(nodes: Node[], edges: Edge[]): boolean {
 }
 
 export {
-  GetNewNodeId,
+  getNewNodeId,
   isDuplicateEdgeStart,
   isValidUniqueSelection,
-  ValidateFlow,
+  validateFlow,
 };

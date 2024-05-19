@@ -56,7 +56,7 @@ This will get triggered on change of viewport selection,
           {activeNode && (
             <button
               onClick={() => {
-                setActiveNode(null);
+                setActiveNode(null); // deselect the node
               }}
               className="absolute left-4"
             >

@@ -6,7 +6,6 @@ import {
   addEdge,
   useNodesState,
   useEdgesState,
-  MiniMap,
   OnConnect,
   useReactFlow,
   Node,
@@ -16,7 +15,7 @@ import "reactflow/dist/style.css";
 
 import { initialNodes, nodeTypes } from "../nodes";
 import { initialEdges } from "../edges";
-import { GetNewNodeId, ValidateFlow, isDuplicateEdgeStart } from "../util";
+import { getNewNodeId, validateFlow, isDuplicateEdgeStart } from "../util";
 
 import SidePanel from "./SidePanel";
 import { toast } from "sonner";
@@ -52,38 +51,34 @@ export default function FlowBuilder() {
   }, []);
 
   // fired when dropping
-  const onDrop =
-    // useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      const type = event.dataTransfer.getData("application/reactflow");
-      if (typeof type === "undefined" || !type || type !== "message") {
-        return;
-      }
+  const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
 
-      const position = reactFlow.screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
+    const type = event.dataTransfer.getData("application/reactflow");
+    if (typeof type === "undefined" || !type || type !== "message") {
+      return;
+    }
+    const position = reactFlow.screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
 
-      // create a new node with the type and position
-      const newNode: Node = {
-        id: GetNewNodeId(nodes),
-        type,
-        position,
-        data: { message: `` },
-      };
-
-      setNodes((nodes) => nodes.concat(newNode));
-      // update active node
-      setActiveNode(newNode);
+    // create a new node with the type and position
+    const newNode: Node = {
+      id: getNewNodeId(nodes),
+      type,
+      position,
+      data: { message: `` },
     };
-  //   [reactFlow]
-  // );
+
+    setNodes((nodes) => nodes.concat(newNode));
+    // update active node
+    setActiveNode(newNode);
+  };
 
   // Save flow handler
   const saveFlow = () => {
-    const isFlowValid = ValidateFlow(nodes, edges);
+    const isFlowValid = validateFlow(nodes, edges);
     if (!isFlowValid) {
       toast.error("Cannot save flow");
       return;
@@ -123,7 +118,7 @@ export default function FlowBuilder() {
           >
             {/* Plugins */}
             <Background />
-            <MiniMap />
+            {/* <MiniMap /> */}
             <Controls />
           </ReactFlow>
         </div>
